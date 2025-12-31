@@ -1,10 +1,9 @@
 #include "abs.h"
 
 int main() {
-    create_window(800, 600, "My App");
+    create_window(1920, 1080, "Filled vs Outlined Demo");
 
     while (window_is_open()) {
-        // Any drawing code goes here
         
         update_window();
     }

@@ -1,2 +1,16 @@
+# Compiled object files
+*.o
+*.obj
+
+# Executables
+myapp
+vulkan_test
+test_simple
 a.out
-.vscdode/
+
+# Vulkan test files (just for fun, not part of main project)
+test.c
+test_simple.c
+
+# Editor directories
+.vscode/
