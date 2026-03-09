@@ -1,243 +1,118 @@
-# ABS Graphics Library
+# BLZ Graphics & Audio Library
 
-A simple and minimal graphics library for creating 2D applications in C. Built as an improved abstraction layer over OpenGL/GLFW, inspired by raylib's clean API design.This library is Designed specifically for integration with the Luna programming language.
+BLZ is a lightweight, high-performance C library for 2D graphics and audio. It provides a simple, modern API for window management, rendering, and sound.
 
 ## About
 
-ABS provides a clean API for window management and 2D drawing primitives. The library uses OpenGL for rendering and GLFW for window management, wrapped in a simple interface that minimizes boilerplate code.
+Releasing this now as i jut ... forgot about it lol
 
-## Dependencies
+This library will hopefully be used for the Luna language in the future.....
 
-**OpenGL**: Cross-platform graphics API for rendering 2D/3D graphics.
+## Features
 
-**GLFW**: Library for creating windows and handling input events.
+- **2D Graphics**: High-performance **OpenGL 3.3** rendering (Rectangles, circles, lines, textures, fonts).
+- **Audio**: Music streaming and sound effects via **miniaudio**.
+- **Input**: Easy-to-use keyboard and mouse handling via **GLFW**.
+- **Single Header**: Include `blz.h` and you're ready to go.
 
-### Installation
+## Credits & Sources
 
-**Ubuntu/Debian:**
+BLZ is built upon these incredible open-source projects:
+
+- **[GLFW](https://www.glfw.org/)**: Window management and input.
+- **[miniaudio](https://miniaud.io/)**: Single-header audio playback and management.
+- **[stb_image](https://github.com/nothings/stb)**: Image loading, Screenshot functionality and Font rendering.
+
+### Acknowledgments
+
+BLZ is heavily inspired by **[raylib](https://www.raylib.com/)**. Many of the API patterns and core implementation ideas (like the batch renderer) are based on the incredible work done by the raylib community. Thank you for making gamedev in C so accessible!
+
+
+## Directory Structure
+
+- `blz.h`: The main library header.
+- `src/`: Core implementation and backend headers.
+- `lib/`: Precompiled static libraries.
+- `main.c`: Demo application.
+
+## How to Build and Run
+
+### Prerequisites (Linux)
 ```bash
-sudo apt-get update
-sudo apt-get install libglfw3-dev
+# Install Clang and dependencies
+sudo apt install gcc build-essential libx11-dev libasound2-dev mesa-common-dev libgl1-mesa-dev 
 ```
 
-**Fedora:**
+### Build & Run
+The project uses `clang` by default (see `Makefile`).
 ```bash
-sudo dnf install glfw-devel
+make       # Uses all CPU cores for fast compilation
+make run   # Executes the demo 
+make run-car # Executes the car demo 
 ```
 
-**Arch Linux:**
-```bash
-sudo pacman -S glfw-wayland
-```
-
-**macOS:**
-```bash
-brew install glfw
-```
-
-## Building
-
-```bash
-make           # Compile the project
-make clean     # Remove compiled files
-make run       # Compile and run
-```
-
-## Project Structure
-
-| File | Description |
-|------|-------------|
-| `colors.h` | Color definitions and RGB/RGBA helper functions |
-| `abs.h` | Main library header with function declarations |
-| `abs.c` | Implementation of drawing and window functions |
-| `main.c` | Example application demonstrating library features |
-
-## Available Functions
-
-### Window Management
-
-| Function | Description |
-|----------|-------------|
-| `create_window(width, height, title)` | Initialize window with specified dimensions and title |
-| `window_is_open()` | Returns 1 if window is open, 0 if closed |
-| `update_window()` | Handle events and refresh display |
-| `close_window()` | Clean up and terminate window |
-
-### Drawing Functions
-
-| Function | Parameters | Description |
-|----------|------------|-------------|
-| `DrawRectangle()` | `x, y, width, height, thickness, color` | Draw rectangle (negative thickness = filled) |
-| `DrawCircle()` | `x, y, radius, thickness, color` | Draw circle (negative thickness = filled) |
-| `DrawLine()` | `x1, y1, x2, y2, thickness, color` | Draw line with specified thickness |
-| `DrawText()` | `text, x, y, color` | Draw text (placeholder, not yet implemented) |
-
-### Color System
-
-**Predefined Colors:**
-`RED`, `GREEN`, `BLUE`, `YELLOW`, `ORANGE`, `PURPLE`, `CYAN`, `MAGENTA`, `WHITE`, `BLACK`, `GRAY`, `PINK`, `BROWN`, `GOLD`, `NAVY`, `TEAL`, and more.
-
-**Custom Colors:**
-```c
-rgb(r, g, b)        // Create RGB color (0-255)
-rgba(r, g, b, a)    // Create RGBA color with transparency
-```
-
-## Examples
-
-### Quick Start: Hello Window
-
-Minimal code to get started with the library:
+## General Example
 
 ```c
-#include "abs.h"
+#include "blz.h"
 
 int main() {
-    create_window(800, 600, "Hello ABS");
+    // 1. Initialize window
+    init_window(1280, 720, "BLZ App");
     
-    while (window_is_open()) {
-        update_window();
+    // 2. Initialize audio system
+    init_audio();
+
+    // 3. Application Loop
+    while (!window_should_close()) {
+        begin_drawing();
+        clear_background(COLOR_BLACK);
+        
+        // Draw a red rectangle
+        draw_rect((Rect){100, 100, 200, 150}, COLOR_RED);
+        
+        // Draw text
+        draw_text("Hello BLZ!", 400, 300, 40, COLOR_WHITE);
+        
+        // Handle input
+        if (is_key_pressed(KEY_ESCAPE)) break;
+
+        end_drawing();
     }
-    
+
+    // 4. Cleanup
+    close_audio();
     close_window();
     return 0;
 }
 ```
 
-This creates a blank window that stays open until closed.
+### Music Credits 
 
-### Example 1: Filled vs Outlined Shapes
+The following tracks are included in the demo playlist. All rights belong to the respective artists.
 
-```c
-#include "abs.h"
+| Track Name     | Artist(s)  |   Source                 |
+| :----------------- | :------------------------ | :---------------------- |
+| **Jackpot**                           | TheFatRat                 | [YouTube](https://www.youtube.com/watch?v=kL8CyVqzmkc) |
+| **Rise Up**                           | TheFatRat                 | [YouTube](https://www.youtube.com/watch?v=j-2DGYNXRx0) |
+| **Close To The Sun**                  | TheFatRat & Anjulie       | [YouTube](https://www.youtube.com/watch?v=oJuGlqO85YI) |
+| **Escaping Gravity**                  | TheFatRat & Cecilia Gault | [YouTube](https://www.youtube.com/watch?v=xfGrN3ZsPLA) |
+| **Hot Together**                      | The Pointer Sisters       | [YouTube](https://www.youtube.com/watch?v=H3Aay-47ZT0) |
+| **Too Sweet**                         | Hozier                    | [YouTube](https://www.youtube.com/watch?v=NTpbbQUBbuo) |
+| **Forever Young**                     | Alphaville                | [YouTube](https://www.youtube.com/watch?v=YHRvDo8rUoQ) |
+| **We Will Rock You**                  | Max Raabe                 | [YouTube](https://www.youtube.com/watch?v=a3O-PLopk5g) |
+| **Sunflower**                         | Post Malone & Swae Lee    | [YouTube](https://www.youtube.com/watch?v=ApXoWvfEYVU) |
+| **Everybody Wants To Rule The World** | Tears For Fears           | [YouTube](https://www.youtube.com/watch?v=aGCdLKXNF3w) |
+| **Unstoppable**                       | The Score                 | [YouTube](https://www.youtube.com/watch?v=_PBlykN4KIY) |
+| **Tip Toe**                           | HYBS                      | [YouTube](https://www.youtube.com/watch?v=dHUq9xJcaZs) |
+| **Blue**                              | yung kai                  | [YouTube](https://www.youtube.com/watch?v=GGJOC1FNqn8) |
+| **Nightcall**                         | Kavinsky                  | [YouTube](https://www.youtube.com/watch?v=MV_3Dpw-BRY) |
 
-int main() {
-    create_window(800, 600, "Filled vs Outlined Demo");
-    
-    while (window_is_open()) {
-        
-        // LEFT SIDE: FILLED SHAPES (thickness = -1)
-        
-        // Filled red rectangle
-        DrawRectangle(50, 50, 150, 100, -1, RED);
-        
-        // Filled green circle
-        DrawCircle(125, 250, 60, -1, GREEN);
-        
-        // Filled yellow square
-        DrawRectangle(50, 350, 100, 100, -1, YELLOW);
-        
-        
-        // RIGHT SIDE: OUTLINED SHAPES (thickness = positive)
-        
-        // Outlined blue rectangle (2px thick)
-        DrawRectangle(450, 50, 150, 100, 2, BLUE);
-        
-        // Outlined orange circle (3px thick)
-        DrawCircle(525, 250, 60, 3, ORANGE);
-        
-        // Outlined purple square (4px thick)
-        DrawRectangle(475, 350, 100, 100, 4, PURPLE);
-        
-        
-        // CENTER: DIVIDER LINE
-        DrawLine(400, 0, 400, 600, 1, WHITE);
-        
-        // BOTTOM: VARIOUS LINE THICKNESSES
-        DrawLine(50, 520, 350, 520, 1, CYAN);    // 1px thin
-        DrawLine(50, 540, 350, 540, 3, CYAN);    // 3px medium
-        DrawLine(50, 560, 350, 560, 8, CYAN);    // 8px thick
-        
-        // Custom RGB colors
-        DrawCircle(700, 100, 40, -1, rgb(255, 100, 200));      // Filled pink
-        DrawRectangle(650, 200, 80, 60, 5, rgb(50, 150, 255)); // Outlined light blue
-        
-        // Semi-transparent
-        DrawRectangle(250, 150, 100, 100, -1, rgba(255, 0, 255, 128)); // Transparent magenta
-        
-        update_window();
-    }
-    
-    close_window();
-    return 0;
-}
-```
-
-### Example 2: Simple Animation
-
-```c
-#include "abs.h"
-
-int main() {
-    create_window(800, 600, "Animation Demo");
-    
-    float x = 0;
-    
-    while (window_is_open()) {
-        
-        // Moving circle
-        DrawCircle(x, 300, 50, -1, RED);
-        
-        // Trail effect
-        DrawCircle(x - 60, 300, 40, -1, rgba(255, 0, 0, 100));
-        DrawCircle(x - 120, 300, 30, -1, rgba(255, 0, 0, 50));
-        
-        // Increment position
-        x += 2;
-        if (x > 850) x = -50;
-        
-        update_window();
-    }
-    
-    close_window();
-    return 0;
-}
-```
-
-### Example 3: Grid Pattern
-
-```c
-#include "abs.h"
-
-int main() {
-    create_window(800, 600, "Grid Pattern");
-    
-    while (window_is_open()) {
-        
-        // Draw grid lines
-        for (int i = 0; i < 800; i += 50) {
-            DrawLine(i, 0, i, 600, 1, GRAY);
-        }
-        
-        for (int i = 0; i < 600; i += 50) {
-            DrawLine(0, i, 800, i, 1, GRAY);
-        }
-        
-        // Draw colorful circles at intersections
-        for (int x = 50; x < 800; x += 100) {
-            for (int y = 50; y < 600; y += 100) {
-                DrawCircle(x, y, 20, -1, rgb(x % 255, y % 255, (x + y) % 255));
-            }
-        }
-        
-        update_window();
-    }
-    
-    close_window();
-    return 0;
-}
-```
-
-## Key Concepts
-
-**Coordinate System:** Origin (0, 0) is at the top-left corner. X increases right, Y increases downward.
-
-**Thickness Convention:**
-- Negative value (e.g., -1): Filled shape
-- Positive value (e.g., 1, 2, 3): Outlined shape with specified pixel width
-
-**Color Values:** RGB values range from 0 to 255. Alpha (transparency) ranges from 0 (fully transparent) to 255 (fully opaque).
+> [!NOTE]
+> I do not own any of the songs or assets used in this demonstration. They are included for demonstration purposes only.
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 (GPLv3). See the LICENSE file for details.
+The core BLZ source code and demo applications are licensed under the **GNU General Public License v3.0**. See the [LICENSE](LICENSE) file for details.
+
+Third-party libraries used in this project are licensed under their own respective terms (Public Domain, MIT, or zlib/libpng).

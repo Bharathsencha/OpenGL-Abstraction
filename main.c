@@ -1,84 +1,53 @@
-#include "graphics.h"
-#include "includes/graphics.h"
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2026 Bharath
+//
+// main.c — Basic demo for the BLZ Graphics & Audio Library
+
+#include "blz.h"
 #include <stdio.h>
+#include <math.h>
 
-int main(void) {
+int main() {
     // Initialize window
-    create_window(800, 600, "FPS and Input Test");
-
-    // Start at 60 FPS
-    int current_fps_limit = 60;
-    setFps(current_fps_limit);
-
-    // Player properties
-    float posX = 400.0f;
-    float posY = 300.0f;
-    float speed = 300.0f;
-    Color playerColor = CYAN;
-
-    printf("Controls:\n");
-    printf("- Move: WASD or Arrow Keys\n");
-    printf("- Toggle FPS (60/Uncapped): Press 'F'\n");
-    printf("- Change Color: Hold SPACE\n");
-    printf("- Mouse Position: Click Left Mouse Button\n");
-    printf("- Exit: ESC\n");
-
-    while (window_is_open()) {
-        float dt = get_delta_time();
-
-        // 1. Toggle FPS Limit
-        // Note: is_key_pressed logic might trigger multiple times per second
-        // unless you use a "just pressed" flag, but for testing this works:
-        if (is_key_down(KEY_F)) {
-            if (current_fps_limit == 60) {
-                current_fps_limit = 0; // Uncapped
-                printf("FPS Limit: Uncapped\n");
-            } else {
-                current_fps_limit = 60;
-                printf("FPS Limit: 60\n");
-            }
-            setFps(current_fps_limit);
-            // Small delay to prevent flickering between states
-            for(volatile int i = 0; i < 10000000; i++);
-        }
-
-        // 2. Movement Handling (Delta time ensures speed is consistent at any FPS)
-        if (is_key_down(KEY_W) || is_key_down(KEY_UP))    posY -= speed * dt;
-        if (is_key_down(KEY_S) || is_key_down(KEY_DOWN))  posY += speed * dt;
-        if (is_key_down(KEY_A) || is_key_down(KEY_LEFT))  posX -= speed * dt;
-        if (is_key_down(KEY_D) || is_key_down(KEY_RIGHT)) posX += speed * dt;
-
-        // 3. State Change (Hold Space)
-        playerColor = is_key_down(KEY_SPACE) ? GOLD : CYAN;
-
-        // 4. Mouse Interaction
-        if (is_mouse_button_down(MOUSE_LEFT)) {
-            float mx, my;
-            get_mouse_position(&mx, &my);
-            printf("Mouse Position: X: %.2f, Y: %.2f | Delta Time: %.4f\n", mx, my, dt);
-        }
-
-        // 5. Exit Shortcut
-        if (is_key_down(KEY_ESCAPE)) break;
-
-        // --- Drawing ---------------------------------------------------------- Bruh how to fix this shit 
-
-        // Background Grid
-        for(int i = 0; i < 800; i += 100) DrawLine(i, 0, i, 600, 1, DARK_GRAY);
-        for(int i = 0; i < 600; i += 100) DrawLine(0, i, 800, i, 1, DARK_GRAY);
-
-        // Player Square
-        DrawRectangle(posX - 25, posY - 25, 50, 50, -1, playerColor);
-
-        // Mouse Follower
-        float mx, my;
-        get_mouse_position(&mx, &my);
-        DrawCircle(mx, my, 15, 2, WHITE);
-
-        // Update window (This is where the FPS wait loop happens)
-        update_window();
+    if (init_window(800, 600, "BLZ Standalone Library Demo") != 0) {
+        return 1;
     }
 
+    // Initialize audio
+    init_audio();
+
+    printf("BLZ Library Initialized\n");
+
+    float time = 0;
+
+    // Main loop
+    while (!window_should_close()) {
+        begin_drawing();
+        clear_background(COLOR_BLACK);
+
+        time += get_frame_time();
+
+        // Draw some shapes
+        draw_rect((Rect){100, 100, 200, 150}, COLOR_RED);
+        draw_circle(400, 300, 50, COLOR_BLUE);
+        draw_line((Vec2){100, 500}, (Vec2){700, 500}, 5.0f, COLOR_GREEN);
+
+        // Animated rectangle
+        float x = 400 + cosf(time) * 200;
+        draw_rect((Rect){x - 25, 400, 50, 50}, COLOR_GOLD);
+
+        // Draw text
+        draw_text("Welcome to BLZ!", 300, 50, 30, COLOR_WHITE);
+        draw_text("Standalone C Library", 320, 85, 20, COLOR_SKYBLUE);
+
+        end_drawing();
+    }
+
+    // Cleanup
+    close_audio();
     close_window();
+
+    printf("BLZ Library Closed\n");
+
     return 0;
 }

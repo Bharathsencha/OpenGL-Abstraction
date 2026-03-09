@@ -1,46 +1,59 @@
-# Compiler and flags
+# BLZ Graphics & Audio Library Makefile
+
+# Enable multicore compilation
+ifeq (,$(filter -j%,$(MAKEFLAGS)))
+MAKEFLAGS += -j$(shell nproc)
+endif
+
+#CC = clang
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -Iincludes
-LDFLAGS = -lglfw -lGL -lm
+CFLAGS = -std=c11 -O3 -Wall -Wextra -I. -Isrc
+LDFLAGS = -Llib -lglfw3 -lGL -lm -lpthread -ldl -lrt -lX11
 
-# Directories
-SRC_DIR = src
-OBJ_DIR = obj
-INC_DIR = includes
+OBJDIR = obj
+BINDIR = bin
+SRCDIR = src
 
-# Target executable
-TARGET = myapp
+DEMO_TARGET = $(BINDIR)/blz_demo
+CAR_TARGET = $(BINDIR)/car_demo
+MUSIC_TARGET = $(BINDIR)/music_demo
 
-# Source files
-SOURCES = main.c $(SRC_DIR)/graphics.c
-OBJECTS = $(OBJ_DIR)/main.o $(OBJ_DIR)/graphics.o
+LIB_SRCS = $(SRCDIR)/gl_backend.c $(SRCDIR)/audio_backend.c
+LIB_OBJS = $(OBJDIR)/gl_backend.o $(OBJDIR)/audio_backend.o
 
-# Default target
-all: $(TARGET)
+all: $(DEMO_TARGET) $(CAR_TARGET) $(MUSIC_TARGET)
 
-# Build the executable
-$(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $(TARGET) $(LDFLAGS)
+$(DEMO_TARGET): $(LIB_OBJS) $(OBJDIR)/main.o | $(BINDIR)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-# Compile main.c from root directory
-$(OBJ_DIR)/main.o: main.c | $(OBJ_DIR)
+$(CAR_TARGET): $(LIB_OBJS) $(OBJDIR)/car.o | $(BINDIR)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+$(MUSIC_TARGET): $(LIB_OBJS) $(OBJDIR)/music.o | $(BINDIR)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Compile .c files from src directory
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC_DIR)/graphics.h | $(OBJ_DIR)
+$(OBJDIR)/%.o: %.c | $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Create obj directory if it doesn't exist
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
 
-# Run the application
-run: $(TARGET)
-	./$(TARGET)
+$(BINDIR):
+	mkdir -p $(BINDIR)
 
-# Clean up build files
+run: $(DEMO_TARGET)
+	./$(DEMO_TARGET)
+
+run-car: $(CAR_TARGET)
+	./$(CAR_TARGET)
+
+run-music: $(MUSIC_TARGET)
+	./$(MUSIC_TARGET)
+
 clean:
-	rm -f $(OBJ_DIR)/*.o $(TARGET)
+	rm -rf $(OBJDIR) $(BINDIR)
 
-# Phony targets (not actual files)
-.PHONY: all run clean
+.PHONY: all run run-car run-music clean
